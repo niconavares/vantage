@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Informe de Auditoría — {{ engagement.client }}</title>
+<style>
+  :root {
+    --bg: #0a0e1a; --surface: #111827; --border: #1f2937;
+    --cyan: #00d4ff; --red: #ff3864; --orange: #ff6b35;
+    --yellow: #ffd60a; --blue: #4cc9f0; --green: #00ff9d;
+    --text: #e5e7eb; --muted: #6b7280;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Helvetica Neue', Arial, sans-serif; background: white; color: #1f2937; font-size: 11pt; line-height: 1.6; }
+
+  /* Cover page */
+  .cover { page-break-after: always; background: #0a0e1a; color: white; min-height: 100vh;
+           display: flex; flex-direction: column; justify-content: center; padding: 60px; }
+  .cover-logo { font-size: 42pt; font-weight: 900; color: #00d4ff; letter-spacing: -2px; margin-bottom: 10px; }
+  .cover-logo span { color: white; }
+  .cover-tagline { color: #6b7280; font-size: 12pt; margin-bottom: 80px; }
+  .cover-title { font-size: 28pt; font-weight: 700; color: white; margin-bottom: 10px; }
+  .cover-client { font-size: 18pt; color: #00d4ff; margin-bottom: 40px; }
+  .cover-meta { display: flex; gap: 40px; color: #9ca3af; font-size: 10pt; }
+  .cover-risk { display: inline-block; padding: 8px 20px; border-radius: 6px; font-weight: 700;
+                font-size: 14pt; color: white; margin-top: 30px; }
+  .cover-stats { display: flex; gap: 30px; margin-top: 60px; }
+  .stat-box { background: #111827; border: 1px solid #1f2937; border-radius: 10px;
+              padding: 20px 30px; text-align: center; }
+  .stat-number { font-size: 28pt; font-weight: 900; }
+  .stat-label { color: #6b7280; font-size: 9pt; text-transform: uppercase; letter-spacing: 1px; }
+
+  /* Page layout */
+  @page { margin: 20mm 15mm; size: A4; }
+  .page-break { page-break-before: always; }
+
+  /* Section headers */
+  h1 { font-size: 22pt; font-weight: 900; color: #0a0e1a; border-bottom: 3px solid #00d4ff;
+       padding-bottom: 8px; margin: 30px 0 20px; }
+  h2 { font-size: 16pt; font-weight: 700; color: #1f2937; margin: 25px 0 15px; }
+  h3 { font-size: 12pt; font-weight: 700; color: #374151; margin: 15px 0 10px; }
+  p  { margin-bottom: 12px; color: #374151; }
+
+  /* Severity badges */
+  .badge { display: inline-block; padding: 3px 10px; border-radius: 4px; font-weight: 700;
+           font-size: 9pt; text-transform: uppercase; letter-spacing: 0.5px; color: white; }
+  .badge-critical { background: #ff3864; }
+  .badge-high     { background: #ff6b35; }
+  .badge-medium   { background: #d97706; color: white; }
+  .badge-low      { background: #0284c7; }
+  .badge-info     { background: #6b7280; }
+
+  /* Risk matrix */
+  .risk-matrix { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin: 20px 0; }
+  .risk-cell { padding: 15px; border-radius: 8px; text-align: center; }
+  .risk-cell .count { font-size: 28pt; font-weight: 900; color: white; }
+  .risk-cell .label { font-size: 9pt; color: rgba(255,255,255,0.8); text-transform: uppercase; }
+  .cell-critical { background: #ff3864; }
+  .cell-high     { background: #ff6b35; }
+  .cell-medium   { background: #d97706; }
+  .cell-low      { background: #0284c7; }
+  .cell-info     { background: #6b7280; }
+
+  /* Findings table */
+  table { width: 100%; border-collapse: collapse; margin: 15px 0; font-size: 10pt; }
+  th { background: #0a0e1a; color: white; padding: 10px; text-align: left;
+       font-size: 9pt; text-transform: uppercase; letter-spacing: 0.5px; }
+  td { padding: 10px; border-bottom: 1px solid #e5e7eb; vertical-align: top; }
+  tr:nth-child(even) td { background: #f9fafb; }
+  tr.sev-critical td { border-left: 4px solid #ff3864; }
+  tr.sev-high     td { border-left: 4px solid #ff6b35; }
+  tr.sev-medium   td { border-left: 4px solid #d97706; }
+  tr.sev-low      td { border-left: 4px solid #0284c7; }
+
+  /* Host cards */
+  .host-card { border: 1px solid #e5e7eb; border-radius: 8px; padding: 15px;
+               margin-bottom: 15px; break-inside: avoid; }
+  .host-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+  .host-ip { font-size: 14pt; font-weight: 700; color: #0a0e1a; font-family: monospace; }
+  .host-os { color: #6b7280; font-size: 10pt; }
+  .port-list { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+  .port-tag { background: #f3f4f6; border: 1px solid #e5e7eb; border-radius: 4px;
+              padding: 2px 8px; font-size: 9pt; font-family: monospace; color: #374151; }
+
+  /* Remediation roadmap */
+  .roadmap { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin: 20px 0; }
+  .roadmap-phase { border-radius: 8px; padding: 15px; }
+  .phase-0-30  { background: #fef2f2; border: 1px solid #fecaca; }
+  .phase-30-90 { background: #fffbeb; border: 1px solid #fed7aa; }
+  .phase-90    { background: #f0fdf4; border: 1px solid #bbf7d0; }
+  .phase-title { font-weight: 700; margin-bottom: 8px; font-size: 11pt; }
+
+  /* Footer */
+  .footer { text-align: center; color: #9ca3af; font-size: 9pt; border-top: 1px solid #e5e7eb;
+            padding-top: 10px; margin-top: 20px; }
+  @page { @bottom-center { content: "VANTAGE Network Audit Platform — Confidencial — " counter(page) " / " counter(pages); font-size: 8pt; color: #9ca3af; } }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════════ PORTADA -->
+<div class="cover">
+  <div class="cover-logo">VANT<span>AGE</span></div>
+  <div class="cover-tagline">Network Security Audit Platform</div>
+  <div class="cover-title">Informe de Auditoría de Red</div>
+  <div class="cover-client">{{ engagement.client }}</div>
+  <div class="cover-meta">
+    <span>📋 {{ engagement.name }}</span>
+    <span>📅 {{ report_date }}</span>
+    <span>🔒 CONFIDENCIAL</span>
+  </div>
+  <div class="cover-risk" style="background: {{ risk_color }}">
+    Riesgo Global: {{ risk_level }}
+  </div>
+  <div class="cover-stats">
+    <div class="stat-box">
+      <div class="stat-number" style="color: #00d4ff">{{ hosts|length }}</div>
+      <div class="stat-label">Hosts</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-number" style="color: #ff3864">{{ by_severity.critical }}</div>
+      <div class="stat-label">Críticas</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-number" style="color: #ff6b35">{{ by_severity.high }}</div>
+      <div class="stat-label">Altas</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-number" style="color: #ffd60a">{{ total_vulns }}</div>
+      <div class="stat-label">Total Vulns</div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════��═════════════════���════════════════════ RESUMEN EJECUTIVO -->
+<h1>1. Resumen Ejecutivo</h1>
+<p>{{ executive_summary | replace('\n', '</p><p>') | safe }}</p>
+
+<div class="risk-matrix">
+  <div class="risk-cell cell-critical">
+    <div class="count">{{ by_severity.critical }}</div>
+    <div class="label">Crítica</div>
+  </div>
+  <div class="risk-cell cell-high">
+    <div class="count">{{ by_severity.high }}</div>
+    <div class="label">Alta</div>
+  </div>
+  <div class="risk-cell cell-medium">
+    <div class="count">{{ by_severity.medium }}</div>
+    <div class="label">Media</div>
+  </div>
+  <div class="risk-cell cell-low">
+    <div class="count">{{ by_severity.low }}</div>
+    <div class="label">Baja</div>
+  </div>
+  <div class="risk-cell cell-info">
+    <div class="count">{{ by_severity.info }}</div>
+    <div class="label">Info</div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ METODOLOGÍA -->
+<div class="page-break"></div>
+<h1>2. Metodología</h1>
+<p>{{ methodology_text | replace('\n', '</p><p>') | safe }}</p>
+
+<!-- ══════════════════════════════════════════════ HOSTS DESCUBIERTOS -->
+<div class="page-break"></div>
+<h1>3. Sistemas Descubiertos</h1>
+<p>Se identificaron <strong>{{ hosts|length }} sistemas activos</strong> con un total de <strong>{{ open_ports_count }} puertos abiertos</strong>.</p>
+
+{% for host in hosts %}
+<div class="host-card">
+  <div class="host-header">
+    <div>
+      <span class="host-ip">{{ host.ip_address }}</span>
+      {% if host.hostname %}<span class="host-os"> — {{ host.hostname }}</span>{% endif %}
+    </div>
+    <div>
+      <span class="badge badge-{{ host.vulnerabilities.all()|selectattr('severity','equalto','critical')|list|length > 0 and 'critical' or host.vulnerabilities.all()|selectattr('severity','equalto','high')|list|length > 0 and 'high' or 'info' }}">
+        {{ host.open_ports }} puertos
+      </span>
+    </div>
+  </div>
+  <div class="host-os">{{ host.os_name or 'Sistema operativo desconocido' }}</div>
+  {% if host.ai_summary %}<p style="margin-top:8px; font-style:italic; color:#4b5563">{{ host.ai_summary }}</p>{% endif %}
+  <div class="port-list">
+    {% for port in host.ports.all() %}
+    {% if port.state == 'open' %}
+    <span class="port-tag">{{ port.number }}/{{ port.protocol }} {{ port.service }}</span>
+    {% endif %}
+    {% endfor %}
+  </div>
+</div>
+{% endfor %}
+
+<!-- ══════════════════════════════════════════════════ VULNERABILIDADES -->
+<div class="page-break"></div>
+<h1>4. Hallazgos de Seguridad</h1>
+<p>Se identificaron <strong>{{ total_vulns }} vulnerabilidades</strong> en los sistemas auditados.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th style="width:8%">Severidad</th>
+      <th style="width:30%">Título</th>
+      <th style="width:15%">Host</th>
+      <th style="width:10%">CVE</th>
+      <th style="width:10%">CVSS</th>
+      <th style="width:27%">Descripción</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for vuln in vulnerabilities %}
+    <tr class="sev-{{ vuln.severity }}">
+      <td><span class="badge badge-{{ vuln.severity }}">{{ vuln.severity }}</span></td>
+      <td><strong>{{ vuln.title }}</strong></td>
+      <td><code>{{ vuln.host.ip_address }}</code></td>
+      <td>{% if vuln.cve_id %}<code>{{ vuln.cve_id }}</code>{% else %}—{% endif %}</td>
+      <td>{% if vuln.cvss_score %}{{ vuln.cvss_score }}{% else %}—{% endif %}</td>
+      <td>{{ vuln.description[:150] }}{% if vuln.description|length > 150 %}...{% endif %}</td>
+    </tr>
+    {% if vuln.ai_analysis %}
+    <tr>
+      <td colspan="6" style="background:#fafafa; padding: 8px 10px; font-size:9.5pt; color:#4b5563; font-style:italic">
+        🤖 {{ vuln.ai_analysis[:300] }}
+      </td>
+    </tr>
+    {% endif %}
+    {% endfor %}
+  </tbody>
+</table>
+
+<!-- ════════════���══════════════════════════════════════════ CREDENCIALES -->
+{% if credentials %}
+<div class="page-break"></div>
+<h1>5. Credenciales Comprometidas</h1>
+<p style="color:#dc2626; font-weight:600">⚠️ Se encontraron credenciales válidas durante la auditoría. Requiere acción inmediata.</p>
+<table>
+  <thead><tr><th>Servicio</th><th>Usuario</th><th>Contraseña</th><th>Host</th></tr></thead>
+  <tbody>
+    {% for cred in credentials %}
+    <tr>
+      <td>{{ cred.service }}</td>
+      <td><code>{{ cred.username }}</code></td>
+      <td><code>{{ cred.password or '(vacía)' }}</code></td>
+      <td><code>{{ cred.host.ip_address }}</code></td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endif %}
+
+<!-- ═════════════════���═════════════════════════════ CONCLUSIONES -->
+<div class="page-break"></div>
+<h1>{% if credentials %}6{% else %}5{% endif %}. Conclusiones y Recomendaciones</h1>
+<p>{{ conclusions_text | replace('\n', '</p><p>') | safe }}</p>
+
+<div class="footer">
+  VANTAGE Network Audit Platform — Informe generado automáticamente con asistencia de IA —
+  Uso exclusivo de {{ engagement.client }} — CONFIDENCIAL
+</div>
+
+</body>
+</html>

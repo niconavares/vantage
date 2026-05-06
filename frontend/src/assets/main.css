@@ -1,0 +1,317 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * { @apply border-border; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    @apply bg-bg text-gray-100 antialiased;
+    font-family: 'Inter', system-ui, sans-serif;
+    background-color: #060910;
+    background-image:
+      linear-gradient(rgba(0,212,255,0.025) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,212,255,0.025) 1px, transparent 1px);
+    background-size: 40px 40px;
+    background-attachment: fixed;
+  }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 5px; height: 5px; }
+  ::-webkit-scrollbar-track { background: #060910; }
+  ::-webkit-scrollbar-thumb { background: #1e2d3d; border-radius: 10px; }
+  ::-webkit-scrollbar-thumb:hover { background: #00d4ff40; }
+
+  /* Selection */
+  ::selection { background: rgba(0,212,255,0.2); color: #fff; }
+}
+
+@layer components {
+
+  /* ── Cards ─────────────────────────────── */
+  .card {
+    @apply rounded-xl p-5 border;
+    background: linear-gradient(135deg, rgba(13,17,23,0.95) 0%, rgba(17,24,39,0.95) 100%);
+    border-color: #1e2d3d;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.4), 0 1px 0 rgba(255,255,255,0.03) inset;
+    position: relative;
+    overflow: hidden;
+  }
+  .card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(0,212,255,0.02) 0%, transparent 60%);
+    pointer-events: none;
+  }
+
+  .card-glass {
+    @apply rounded-xl p-5 border;
+    background: rgba(13,17,23,0.75);
+    border-color: rgba(255,255,255,0.06);
+    backdrop-filter: blur(16px);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+  }
+
+  .card-threat {
+    @apply card border-red/20;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,56,100,0.1) inset;
+  }
+
+  /* ── Stat Cards ────────────────────────── */
+  .stat-card {
+    @apply card flex flex-col gap-2;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  .stat-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.5), 0 1px 0 rgba(255,255,255,0.04) inset;
+  }
+  .stat-value {
+    font-family: 'Rajdhani', sans-serif;
+    @apply text-4xl font-bold leading-none;
+  }
+  .stat-label {
+    @apply text-xs uppercase tracking-widest;
+    color: #4b6277;
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+  }
+
+  /* ── Section headers ───────────────────── */
+  .section-title {
+    font-family: 'Rajdhani', sans-serif;
+    @apply text-xs font-bold uppercase tracking-widest text-muted;
+    letter-spacing: 0.15em;
+  }
+
+  /* ── Badges ────────────────────────────── */
+  .badge-critical {
+    @apply inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-bold uppercase tracking-wider;
+    background: rgba(255,56,100,0.12);
+    color: #ff3864;
+    border: 1px solid rgba(255,56,100,0.25);
+    font-family: 'Rajdhani', sans-serif;
+    letter-spacing: 0.08em;
+  }
+  .badge-high {
+    @apply inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-bold uppercase tracking-wider;
+    background: rgba(255,107,53,0.12);
+    color: #ff6b35;
+    border: 1px solid rgba(255,107,53,0.25);
+    font-family: 'Rajdhani', sans-serif;
+    letter-spacing: 0.08em;
+  }
+  .badge-medium {
+    @apply inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-bold uppercase tracking-wider;
+    background: rgba(245,158,11,0.12);
+    color: #f59e0b;
+    border: 1px solid rgba(245,158,11,0.25);
+    font-family: 'Rajdhani', sans-serif;
+    letter-spacing: 0.08em;
+  }
+  .badge-low {
+    @apply inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-bold uppercase tracking-wider;
+    background: rgba(76,201,240,0.10);
+    color: #4cc9f0;
+    border: 1px solid rgba(76,201,240,0.2);
+    font-family: 'Rajdhani', sans-serif;
+    letter-spacing: 0.08em;
+  }
+  .badge-info {
+    @apply inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-bold uppercase tracking-wider;
+    background: rgba(75,98,119,0.2);
+    color: #4b6277;
+    border: 1px solid rgba(75,98,119,0.3);
+    font-family: 'Rajdhani', sans-serif;
+    letter-spacing: 0.08em;
+  }
+
+  /* ── Buttons ───────────────────────────── */
+  .btn-primary {
+    @apply px-4 py-2 rounded-lg text-sm font-semibold inline-flex items-center gap-2 transition-all duration-200;
+    background: linear-gradient(135deg, #00d4ff, #0099cc);
+    color: #060910;
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    box-shadow: 0 0 20px rgba(0,212,255,0.2);
+  }
+  .btn-primary:hover {
+    background: linear-gradient(135deg, #33ddff, #00b3d9);
+    box-shadow: 0 0 30px rgba(0,212,255,0.35);
+    transform: translateY(-1px);
+  }
+  .btn-primary:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+  }
+
+  .btn-ghost {
+    @apply px-4 py-2 rounded-lg text-sm inline-flex items-center gap-2 transition-all duration-200;
+    background: rgba(30,45,61,0.5);
+    border: 1px solid #1e2d3d;
+    color: #8ba5bc;
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+  }
+  .btn-ghost:hover {
+    border-color: rgba(0,212,255,0.4);
+    color: #00d4ff;
+    background: rgba(0,212,255,0.05);
+  }
+
+  .btn-danger {
+    @apply px-4 py-2 rounded-lg text-sm inline-flex items-center gap-2 transition-all duration-200;
+    background: rgba(255,56,100,0.08);
+    border: 1px solid rgba(255,56,100,0.25);
+    color: #ff3864;
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 600;
+  }
+  .btn-danger:hover {
+    background: rgba(255,56,100,0.15);
+    box-shadow: 0 0 20px rgba(255,56,100,0.2);
+  }
+
+  /* ── Inputs ────────────────────────────── */
+  .input {
+    @apply w-full rounded-lg px-3 py-2 text-sm transition-all duration-200;
+    background: rgba(6,9,16,0.8);
+    border: 1px solid #1e2d3d;
+    color: #e2e8f0;
+    outline: none;
+    font-family: 'Inter', sans-serif;
+  }
+  .input::placeholder { color: #4b6277; }
+  .input:focus {
+    border-color: rgba(0,212,255,0.5);
+    box-shadow: 0 0 0 3px rgba(0,212,255,0.08), 0 0 15px rgba(0,212,255,0.1);
+  }
+  select.input { cursor: pointer; }
+
+  /* ── Table ─────────────────────────────── */
+  .vtable { @apply w-full; }
+  .vtable thead { border-bottom: 1px solid #1e2d3d; }
+  .vtable th {
+    @apply py-3 px-4 text-left;
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #4b6277;
+  }
+  .vtable td {
+    @apply py-3 px-4;
+    font-size: 13px;
+    border-bottom: 1px solid rgba(30,45,61,0.5);
+  }
+  .vtable tbody tr {
+    transition: background 0.15s ease;
+  }
+  .vtable tbody tr:hover td {
+    background: rgba(0,212,255,0.025);
+  }
+  .vtable tbody tr:last-child td { border-bottom: none; }
+
+  /* ── Glow effects ──────────────────────── */
+  .glow-cyan   { box-shadow: 0 0 25px rgba(0,212,255,0.2), 0 0 60px rgba(0,212,255,0.06); }
+  .glow-red    { box-shadow: 0 0 25px rgba(255,56,100,0.2), 0 0 60px rgba(255,56,100,0.06); }
+  .glow-green  { box-shadow: 0 0 25px rgba(0,255,157,0.2); }
+  .border-glow-cyan {
+    border-color: rgba(0,212,255,0.35) !important;
+    box-shadow: 0 0 0 1px rgba(0,212,255,0.1), 0 0 20px rgba(0,212,255,0.1);
+  }
+
+  /* ── Log terminal ──────────────────────── */
+  .log-info    { color: #8ba5bc; }
+  .log-warning { color: #f59e0b; }
+  .log-error   { color: #ff3864; }
+  .log-success { color: #00ff9d; }
+
+  /* ── Terminal ──────────────────────────── */
+  .terminal {
+    background: #020408;
+    border: 1px solid #1e2d3d;
+    border-radius: 12px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    padding: 16px;
+    position: relative;
+    overflow: hidden;
+  }
+  .terminal::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(0,212,255,0.5), transparent);
+  }
+
+  /* ── Severity indicators ───────────────── */
+  .sev-dot-critical { @apply w-2 h-2 rounded-full bg-red animate-pulse-red; }
+  .sev-dot-high     { @apply w-2 h-2 rounded-full bg-orange; }
+  .sev-dot-medium   { @apply w-2 h-2 rounded-full bg-yellow; }
+  .sev-dot-low      { @apply w-2 h-2 rounded-full bg-blue; }
+  .sev-dot-info     { @apply w-2 h-2 rounded-full bg-muted; }
+
+  /* ── Risk bar ──────────────────────────── */
+  .risk-bar { @apply h-1.5 rounded-full bg-border overflow-hidden; }
+  .risk-fill { @apply h-full rounded-full transition-all duration-700; }
+
+  /* ── Page titles ───────────────────────── */
+  .page-title {
+    font-family: 'Rajdhani', sans-serif;
+    @apply text-3xl font-bold text-white;
+    letter-spacing: 0.02em;
+  }
+  .page-subtitle { @apply text-sm; color: #4b6277; }
+
+  /* ── Nav item active ───────────────────── */
+  .nav-active {
+    background: linear-gradient(90deg, rgba(0,212,255,0.1), rgba(0,212,255,0.03));
+    border-left: 2px solid #00d4ff;
+    color: #00d4ff !important;
+  }
+
+  /* ── Scan status pill ──────────────────── */
+  .scan-running {
+    @apply inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold;
+    background: rgba(0,212,255,0.1);
+    border: 1px solid rgba(0,212,255,0.25);
+    color: #00d4ff;
+    font-family: 'Rajdhani', sans-serif;
+    letter-spacing: 0.06em;
+  }
+
+  /* ── Animate entries ───────────────────── */
+  .animate-entry { animation: slide-up 0.4s cubic-bezier(0.16,1,0.3,1) forwards; }
+  .animate-entry-1 { animation: slide-up 0.4s 0.05s cubic-bezier(0.16,1,0.3,1) both; }
+  .animate-entry-2 { animation: slide-up 0.4s 0.10s cubic-bezier(0.16,1,0.3,1) both; }
+  .animate-entry-3 { animation: slide-up 0.4s 0.15s cubic-bezier(0.16,1,0.3,1) both; }
+  .animate-entry-4 { animation: slide-up 0.4s 0.20s cubic-bezier(0.16,1,0.3,1) both; }
+}
+
+/* ── ApexCharts ──────────────────────────── */
+.apexcharts-canvas { background: transparent !important; }
+.apexcharts-tooltip {
+  background: #0d1117 !important;
+  border: 1px solid #1e2d3d !important;
+  border-radius: 8px !important;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.5) !important;
+}
+.apexcharts-gridline { stroke: #1e2d3d !important; }
+.apexcharts-xaxis-tick, .apexcharts-yaxis-tick { stroke: #1e2d3d !important; }
+.apexcharts-text tspan { fill: #4b6277 !important; }
+
+/* ── Transitions ──────────────────────────── */
+.v-enter-active, .v-leave-active { transition: opacity 0.2s ease, transform 0.2s ease; }
+.v-enter-from { opacity: 0; transform: translateY(8px); }
+.v-leave-to   { opacity: 0; transform: translateY(-8px); }
